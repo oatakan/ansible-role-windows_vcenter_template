@@ -24,5 +24,4 @@ galaxy_info:
     - multicloud
     - template
 
-dependencies:
-  - oatakan.windows_template_build
+dependencies: []
