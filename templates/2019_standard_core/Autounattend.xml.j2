@@ -106,6 +106,7 @@
         <ProtectYourPC>1</ProtectYourPC>
       </OOBE>
       <TimeZone>{{ settings.time_zone | default('UTC') }}</TimeZone>
+      <UserAccounts>
 {% if unattend.administrator_password is defined %}
         <AdministratorPassword>
             <Value>{{ unattend.administrator_password }}</Value>
