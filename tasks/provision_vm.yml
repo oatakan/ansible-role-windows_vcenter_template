@@ -57,7 +57,7 @@
 - name: waiting for servers to come online
   wait_for:
     host: "{{ template.networks[0].ip }}"
-    port: "{{ template.ansible_port | default(ansible_port) | default('22') }}"
+    port: "{{ template.ansible_port | default(ansible_port) | default('5986') }}"
     timeout: "{{ instance_wait_connection_timeout }}"
   when:
     - instance is defined

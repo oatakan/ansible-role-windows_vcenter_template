@@ -18,7 +18,7 @@
     - include_tasks: provision_vm.yml
 
     - include_role:
-        name: oatakan.windows_template_build
+        name: "{{ windows_build_role }}"
         apply:
           vars:
             ansible_user: "{{ unattend.local_accounts[0].name }}"
