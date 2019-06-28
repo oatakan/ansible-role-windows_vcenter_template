@@ -1,10 +1,9 @@
 ---
 - hosts: localhost
-  remote_user: Administrator
+  gather_facts: False
+  connection: local
+  become: no
   vars:
     ansible_port: 5986
-    ansible_connection: winrm
-    ansible_winrm_transport: credssp
-    ansible_winrm_server_cert_validation: ignore
   roles:
-    - ansible-role-windows_template_build
+    - ../.

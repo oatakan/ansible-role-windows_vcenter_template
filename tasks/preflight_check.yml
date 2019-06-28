@@ -9,7 +9,8 @@
     vm_type: template
   register: template_facts
 
-- fail:
+- name: fail with message
+  fail:
     msg: "Existing template found on vcenter: {{ template.name }}"
   when:
     - ansible_version.full is version('2.8.0', '<')
@@ -18,7 +19,8 @@
     - template is defined
     - template_facts.virtual_machines[template.name] is defined
 
-- fail:
+- name: fail with message
+  fail:
     msg: "Existing template found on vcenter: {{ template.name }}"
   when:
     - ansible_version.full is version('2.8.0', '>=')
