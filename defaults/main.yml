@@ -19,7 +19,7 @@ enable_auto_logon: yes
 
 windows_build_role: oatakan.windows_template_build
 
-administrator_password: Chang3MyP@ssw0rd21
+local_administrator_password: Chang3MyP@ssw0rd21
 local_account_username: ansible
 local_account_password: Chang3MyP@ssw0rd21
 

@@ -7,7 +7,7 @@ iso_file: "{{ datastore_iso_folder }}/windows_{{ windows_distro_name }}_autounat
 export_dir: "{{ playbook_dir }}/{{ temp_directory }}"
 
 unattend:
-  administrator_password: "{{ administrator_password }}"
+  administrator_password: "{{ local_administrator_password }}"
   local_accounts:
     - name: "{{ local_account_username }}"
       display_name: "{{ local_account_username }}"
