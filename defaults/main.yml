@@ -25,7 +25,7 @@ template_vm_root_disk_size: 30
 template_vm_root_disk_type: thin
 template_vm_network_name: mgmt
 template_vm_ip_address: 192.168.1.99
-template_vm_subnet: 255.255.255.0
+template_vm_netmask: 255.255.255.0
 template_vm_gateway: 192.168.1.254
 template_vm_domain: home.ad
 template_vm_dns_servers:
