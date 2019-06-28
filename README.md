@@ -28,9 +28,24 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
+    - name: create a vmware windows template
+      hosts: all
+      gather_facts: False
+      connection: local
+      become: no
+      vars:
+        template_force: yes
+        export_ovf: no
+        providers:
+          vcenter:
+            cluster: mylab
+            datacenter: cloud
+            datastore: datastore2
+            folder: template
+            resource_pool: manageto
+    
       roles:
-         - oatakan.windows_vcenter_template
+        - oatakan.windows_vcenter_template
 
 License
 -------
