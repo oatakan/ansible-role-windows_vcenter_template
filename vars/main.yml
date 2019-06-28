@@ -7,13 +7,13 @@ iso_file: "{{ datastore_iso_folder }}/windows_{{ windows_distro_name }}_autounat
 export_dir: "{{ playbook_dir }}/{{ temp_directory }}"
 
 unattend:
-  administrator_password: Chang3MyP@ssw0rd21
+  administrator_password: "{{ administrator_password }}"
   local_accounts:
-    - name: ansible
-      display_name: ansible
-      description: ansible user
+    - name: "{{ local_account_username }}"
+      display_name: "{{ local_account_username }}"
+      description: "{{ local_account_username }} user"
       group: Administrators
-      password: Chang3MyP@ssw0rd21
+      password: "{{ local_account_password }}"
   settings:
     computer_name: wintemp
     time_zone: UTC
