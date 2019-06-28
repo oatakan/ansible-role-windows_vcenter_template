@@ -1,0 +1,56 @@
+---
+
+temp_directory: tmp{{ awx_job_id | default('') }}
+
+iso_file: "{{ datastore_iso_folder }}/windows_{{ windows_distro_name }}_autounattend{{ awx_job_id | default('') }}.iso"
+
+export_dir: "{{ playbook_dir }}/{{ temp_directory }}"
+
+unattend:
+  administrator_password: Chang3MyP@ssw0rd21
+  local_accounts:
+    - name: ansible
+      display_name: ansible
+      description: ansible user
+      group: Administrators
+      password: Chang3MyP@ssw0rd21
+  settings:
+    computer_name: wintemp
+    time_zone: UTC
+    skip_auto_activation: true
+
+providers:
+  vcenter:
+    datacenter: "{{ vcenter_datacenter }}"
+    cluster: "{{ vcenter_cluster }}"
+    resource_pool: "{{ vcenter_resource_pool }}"
+    folder: "{{ vcenter_folder }}"
+    datastore: "{{ vcenter_datastore }}"
+
+autounattend_cdrom:
+  type: iso
+  iso_path: "[{{ providers.vcenter.datastore | default('datastore1') }}] {{ iso_file }}"
+
+template:
+  name: "{{ template_vm_name }}"
+  role: windows_template
+  app_name: windows_template_generate
+  domain: "{{ template_vm_domain }}"
+  disk:
+    - size_gb: "{{ template_vm_root_disk_size }}"
+      type: "{{ template_vm_root_disk_type }}"
+      datastore: {{ providers.vcenter.datastore | default('datastore1')
+  memory: 4096
+  cpu: 2
+  guest_id: windows9Server64Guest
+  networks:
+    - name: "{{ template_vm_network_name }}"
+      ip: "{{ template_vm_ip_address }}"
+      netmask: "{{ template_vm_netmask }}"
+      gateway: "{{ template_vm_gateway }}"
+      domain: "{{ template_vm_domain }}"
+      device_type: e1000e
+      dns_servers: "{{ template_vm_dns_servers }}"
+  cdrom:
+    - type: iso
+      iso_path: "[{{ providers.vcenter.datastore | default('datastore1') }}] {{ datastore_iso_folder }}/{{ iso_file_name }}"

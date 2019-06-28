@@ -1,0 +1,13 @@
+---
+
+- name: export ovf file
+  vmware_export_ovf:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    uuid: "{{ instance.instance.uuid | default(omit) }}"
+    name: "{{ template.name }}"
+    export_with_images: no
+    export_dir: "{{ export_dir }}/"
+    validate_certs: no

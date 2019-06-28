@@ -1,0 +1,40 @@
+---
+
+- name: stop vm
+  vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    validate_certs: no
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    cluster: "{{ providers.vcenter.cluster }}"
+    uuid: "{{ instance.instance.uuid | default(omit) }}"
+    name: "{{ template.name }}"
+    cdrom: []
+    state: poweredoff
+  async: 7200
+  poll: 0
+  register: stop
+  when: template is defined
+
+- name: wait for instance to stop
+  async_status:
+    jid: "{{ stop.ansible_job_id }}"
+  register: instance
+  until: instance.finished
+  retries: "{{ instance_wait_retry_limit }}"
+  delay: 10
+
+- name: reconfigure vm
+  vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    validate_certs: no
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    cluster: "{{ providers.vcenter.cluster }}"
+    uuid: "{{ instance.instance.uuid | default(omit) }}"
+    name: "{{ template.name }}"
+    cdrom: []
+    state: present
+  when: template is defined

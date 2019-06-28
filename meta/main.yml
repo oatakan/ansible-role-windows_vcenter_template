@@ -1,0 +1,28 @@
+---
+galaxy_info:
+  author: Orcun Atakan
+  description: Ansible galaxy role for building a Windows VM template from an ISO file on VMware vcenter.
+  role_name: windows_vcenter_template
+  company: Red Hat
+
+  license: MIT
+
+  min_ansible_version: 2.5
+
+  platforms:
+    - name: Windows
+      versions:
+        - all
+
+  cloud_platforms:
+    - vmware
+
+  galaxy_tags:
+    - windows
+    - vmware
+    - cloud
+    - multicloud
+    - template
+
+dependencies:
+  - oatakan.windows_template_build

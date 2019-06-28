@@ -1,0 +1,39 @@
+---
+
+instance_wait_retry_limit: 300
+instance_wait_connection_timeout: 400
+
+create_snapshot: yes
+snapshot_name: Linked
+snapshot_description: Linked snapshot for cloning
+
+# this will remove existing template with the same name
+template_force: no
+
+export_ovf: no
+
+datastore_iso_folder: iso
+
+enable_auto_logon: no
+
+windows_distro_name: 2019_standard_core
+iso_file_name: 17763.253.190108-0006.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso
+
+
+template_vm_name: windows-2019-standard-core-auto
+template_vm_root_disk_size: 30
+template_vm_root_disk_type: thin
+template_vm_network_name: mgmt
+template_vm_ip_address: 192.168.1.99
+template_vm_subnet: 255.255.255.0
+template_vm_gateway: 192.168.1.254
+template_vm_domain: home.ad
+template_vm_dns_servers:
+  - 192.168.1.254
+  - 8.8.8.8
+
+vcenter_datacenter: cloud
+vcenter_cluster: mylab
+vcenter_resource_pool: manageto
+vcenter_folder: template
+vcenter_datastore: datastore2

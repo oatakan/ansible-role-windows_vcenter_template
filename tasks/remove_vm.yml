@@ -1,0 +1,26 @@
+---
+
+- name: remove vm
+  vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    validate_certs: no
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    cluster: "{{ providers.vcenter.cluster }}"
+    uuid: "{{ instance.instance.uuid | default(omit) }}"
+    name: "{{ template.name }}"
+    force: yes
+    state: absent
+  async: 7200
+  poll: 0
+  register: undeploy
+  when: template is defined
+
+- name: wait for instance deletion to complete
+  async_status:
+    jid: "{{ undeploy.ansible_job_id }}"
+  register: instance
+  until: instance.finished
+  retries: "{{ instance_wait_retry_limit }}"
+  delay: 10

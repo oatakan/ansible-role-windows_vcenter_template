@@ -1,0 +1,66 @@
+---
+
+- name: provision a new vm
+  vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    validate_certs: no
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    cluster: "{{ providers.vcenter.cluster }}"
+    resource_pool: "{{ providers.vcenter.resource_pool|default('') }}"
+    folder: "{{ providers.vcenter.folder|default('') }}"
+    name: "{{ template.name }}"
+    cdrom: "{{ (template.cdrom + [autounattend_cdrom])|default(omit) }}"
+    customvalues: "{{ template.customvalues|default(omit) }}"
+    state: poweredon
+    wait_for_ip_address: no
+    disk: "{{ template.disk|default(omit) }}"
+    hardware:
+      memory_mb: "{{ template.memory }}"
+      num_cpus: "{{ template.cpu }}"
+      scsi: lsilogicsas
+    guest_id: "{{ template.guest_id }}"
+    networks: "{{ template.networks }}"
+  async: 7200
+  poll: 0
+  register: deploy
+  when: template is defined
+
+- name: wait for instance creation to complete
+  async_status:
+    jid: "{{ deploy.ansible_job_id }}"
+  register: instance
+  until: instance.finished
+  retries: "{{ instance_wait_retry_limit }}"
+  delay: 10
+
+- name: add custom attributes
+  vmware_guest_custom_attributes:
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    name: "{{ instance.instance.hw_name }}"
+    state: present
+    validate_certs: no
+    attributes:
+      - name: app_name
+        value: "{{ template.app_name | default('') }}"
+      - name: role
+        value: "{{ template.role | default('') }}"
+  when:
+    - instance is defined
+    - instance.instance is defined
+    - template is defined
+  ignore_errors: yes
+
+- name: waiting for servers to come online
+  wait_for:
+    host: "{{ template.networks[0].ip }}"
+    port: "{{ template.ansible_port | default(ansible_port) | default('22') }}"
+    timeout: "{{ instance_wait_connection_timeout }}"
+  when:
+    - instance is defined
+    - instance.instance is defined
+    - template is defined
+  ignore_errors: yes

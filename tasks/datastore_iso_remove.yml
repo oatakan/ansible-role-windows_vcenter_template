@@ -1,0 +1,12 @@
+---
+
+- name: remove iso file from datastore
+  vsphere_file:
+    host: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    datastore: "{{ providers.vcenter.datastore | default('datastore2') }}"
+    path: "{{ iso_file }}"
+    validate_certs: no
+    state: absent

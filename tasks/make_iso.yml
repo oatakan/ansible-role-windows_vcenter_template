@@ -1,0 +1,26 @@
+---
+- block:
+    - name: create temporary directory
+      file:
+        path: "{{ temp_directory }}"
+        state: directory
+
+    - name: create Autounattend.xml file
+      template:
+        src: "{{ windows_distro_name }}/Autounattend.xml.j2"
+        dest: "{{ temp_directory }}/Autounattend.xml"
+
+    - name: create iso
+      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ windows_distro_name }}_autounattend_autogen.iso Autounattend.xml
+      args:
+        chdir: "{{ playbook_dir }}/{{ temp_directory }}"
+
+    - include_tasks: datastore_upload.yml
+  always:
+    - name: remove temporary files
+      file:
+        path: "{{ temp_directory }}/{{ item }}"
+        state: absent
+      loop:
+        - windows_{{ windows_distro_name }}_autounattend_autogen.iso
+        - Autounattend.xml
