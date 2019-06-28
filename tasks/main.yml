@@ -19,20 +19,20 @@
 
     - include_role:
         name: oatakan.windows_template_build
-      apply:
-        vars:
-          ansible_user: "{{ unattend.local_accounts[0].name }}"
-          ansible_password: "{{ unattend.local_accounts[0].password }}"
-          ansible_port: 5986
-          ansible_connection: winrm
-          ansible_winrm_transport: credssp
-          ansible_winrm_server_cert_validation: ignore
-          ansible_winrm_operation_timeout_sec: 250
-          ansible_winrm_read_timeout_sec: 280
-          install_updates: yes
-          remove_apps: yes
-          clean_up_components: yes
-        delegate_to: "{{ template_vm_ip_address }}"
+        apply:
+          vars:
+            ansible_user: "{{ unattend.local_accounts[0].name }}"
+            ansible_password: "{{ unattend.local_accounts[0].password }}"
+            ansible_port: 5986
+            ansible_connection: winrm
+            ansible_winrm_transport: credssp
+            ansible_winrm_server_cert_validation: ignore
+            ansible_winrm_operation_timeout_sec: 250
+            ansible_winrm_read_timeout_sec: 280
+            install_updates: yes
+            remove_apps: yes
+            clean_up_components: yes
+          delegate_to: "{{ template_vm_ip_address }}"
 
     - include_tasks: stop_vm.yml
 
