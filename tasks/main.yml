@@ -1,7 +1,6 @@
 ---
 
 - include_tasks: preflight_check.yml
-  when: not template_force|bool
 
 # remove existing template
 - block:
@@ -9,7 +8,9 @@
 
     - include_tasks: remove_vm.yml
 
-  when: template_force|bool
+  when:
+    - template_force|bool
+    - template_found|bool
 
 - block:
     - include_tasks: make_iso.yml

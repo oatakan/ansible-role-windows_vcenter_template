@@ -9,6 +9,7 @@ snapshot_description: Linked snapshot for cloning
 
 # this will remove existing template with the same name
 template_force: no
+template_found: no
 
 export_ovf: no
 

@@ -9,9 +9,15 @@
     vm_type: template
   register: template_facts
 
-- name: fail with message
-  fail:
-    msg: "Existing template found on vcenter: {{ template.name }}"
+- block:
+    - name: set template_found to yes
+      set_fact:
+        template_found: yes
+
+    - name: fail with message
+      fail:
+        msg: "Existing template found on vcenter: {{ template.name }}"
+      when: not template_force|bool
   when:
     - ansible_version.full is version('2.8.0', '<')
     - template_facts is success
@@ -19,9 +25,15 @@
     - template is defined
     - template_facts.virtual_machines[template.name] is defined
 
-- name: fail with message
-  fail:
-    msg: "Existing template found on vcenter: {{ template.name }}"
+- block:
+    - name: set template_found to yes
+      set_fact:
+        template_found: yes
+
+    - name: fail with message
+      fail:
+        msg: "Existing template found on vcenter: {{ template.name }}"
+      when: not template_force|bool
   when:
     - ansible_version.full is version('2.8.0', '>=')
     - template_facts is success
