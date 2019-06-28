@@ -39,7 +39,7 @@ template:
   disk:
     - size_gb: "{{ template_vm_root_disk_size }}"
       type: "{{ template_vm_root_disk_type }}"
-      datastore: {{ providers.vcenter.datastore | default('datastore1')
+      datastore: "{{ providers.vcenter.datastore | default('datastore1') }}"
   memory: 4096
   cpu: 2
   guest_id: windows9Server64Guest
