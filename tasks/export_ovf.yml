@@ -11,3 +11,14 @@
     export_with_images: no
     export_dir: "{{ export_dir }}/"
     validate_certs: no
+  async: 7200
+  poll: 0
+  register: export_ovf_file
+
+- name: wait for ovf export to complete
+  async_status:
+    jid: "{{ export_ovf_file.ansible_job_id }}"
+  register: ovf
+  until: ovf.finished
+  retries: "{{ instance_wait_retry_limit }}"
+  delay: 10
