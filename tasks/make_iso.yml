@@ -7,7 +7,7 @@
 
     - name: create Autounattend.xml file
       template:
-        src: "{{ windows_distro_name }}/Autounattend.xml.j2"
+        src: "{{ windows_sysprep_template_folder }}/Autounattend.xml.j2"
         dest: "{{ temp_directory }}/Autounattend.xml"
 
     - name: create iso
