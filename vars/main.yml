@@ -18,6 +18,7 @@ unattend:
     computer_name: wintemp
     time_zone: UTC
     skip_auto_activation: true
+  product_key: "{{ iso_product_key | default('') }}"
 
 providers:
   vcenter:
