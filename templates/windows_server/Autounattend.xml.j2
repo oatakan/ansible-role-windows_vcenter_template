@@ -168,38 +168,64 @@
             <Order>2</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+{% if '2008' in windows_distro_name %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -Command "winrm quickconfig -quiet"</CommandLine>
+            <Description>Enable winrm on 2008</Description>
+            <Order>3</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))) -ForceNewSSLCert -EnableCredSSP"</CommandLine>
             <Description>Enable winrm</Description>
-            <Order>3</Order>
+            <Order>4</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Enable-WSManCredSSP -Role Server -Force"</CommandLine>
             <Description>Enable winrm server role</Description>
-            <Order>4</Order>
+            <Order>5</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-Item -Path 'WSMan:\localhost\Service\Auth\CredSSP' -Value $true"</CommandLine>
             <Description>Enable credssp authentication</Description>
-            <Order>5</Order>
+            <Order>6</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
+{% if not '2008' in windows_distro_name %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress –IPAddress {{ template.networks[0].ip }} -DefaultGateway {{ template.networks[0].gateway}} -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ipaddr('prefix') }} -InterfaceIndex (Get-NetAdapter).InterfaceIndex"</CommandLine>
+            <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress –IPAddress {{ template.networks[0].ip }} -DefaultGateway {{ template.networks[0].gateway }} -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ipaddr('prefix') }} -InterfaceIndex (Get-NetAdapter).InterfaceIndex"</CommandLine>
             <Description>Set static ip</Description>
             <Order>50</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+{% else %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c netsh int ipv4 set address "Local Area connection" static {{ template.networks[0].ip }} {{ template.networks[0].netmask }} {{ template.networks[0].gateway }}</CommandLine>
+            <Description>Set static ip</Description>
+            <Order>50</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
 {% if template.networks[0].dns_servers is defined %}
+{% if not '2008' in windows_distro_name %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-DNSClientServerAddress –InterfaceIndex (Get-NetAdapter).InterfaceIndex –ServerAddresses {{ template.networks[0].dns_servers|join(',') }}"</CommandLine>
             <Description>Set static ip</Description>
             <Order>51</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+{% else %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c netsh int ipv4 set dns "Local Area connection" static {{ template.networks[0].dns_servers[0] }}</CommandLine>
+            <Description>Set static ip</Description>
+            <Order>51</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
 {% endif %}
 {% endif %}
       </FirstLogonCommands>
