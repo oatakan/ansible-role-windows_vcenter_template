@@ -175,23 +175,29 @@
             <Order>3</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/jborean93/ansible-windows/master/scripts/Upgrade-PowerShell.ps1'))) -Version 3.0"</CommandLine>
+            <Description>Upgrade Powershell</Description>
+            <Order>4</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
 {% endif %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))) -ForceNewSSLCert -EnableCredSSP"</CommandLine>
             <Description>Enable winrm</Description>
-            <Order>4</Order>
+            <Order>5</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Enable-WSManCredSSP -Role Server -Force"</CommandLine>
             <Description>Enable winrm server role</Description>
-            <Order>5</Order>
+            <Order>6</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-Item -Path 'WSMan:\localhost\Service\Auth\CredSSP' -Value $true"</CommandLine>
             <Description>Enable credssp authentication</Description>
-            <Order>6</Order>
+            <Order>7</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
