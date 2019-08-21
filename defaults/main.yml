@@ -28,6 +28,8 @@ iso_file_name: 17763.253.190108-0006.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_
 windows_sysprep_template_folder: windows_server
 iso_image_index: 1
 
+vm_ansible_port: 5986
+vm_ansible_ansible_winrm_transport: credssp
 
 template_vm_name: windows-2019-standard-core-auto
 template_vm_root_disk_size: 30

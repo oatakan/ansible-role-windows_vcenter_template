@@ -23,9 +23,9 @@
           vars:
             ansible_user: "{{ unattend.local_accounts[0].name }}"
             ansible_password: "{{ unattend.local_accounts[0].password }}"
-            ansible_port: 5986
+            ansible_port: "{{ vm_ansible_port | default('5986') }}"
             ansible_connection: winrm
-            ansible_winrm_transport: credssp
+            ansible_winrm_transport: "{{ vm_ansible_ansible_winrm_transport | default('credssp') }}"
             ansible_winrm_server_cert_validation: ignore
             ansible_winrm_operation_timeout_sec: 250
             ansible_winrm_read_timeout_sec: 280
