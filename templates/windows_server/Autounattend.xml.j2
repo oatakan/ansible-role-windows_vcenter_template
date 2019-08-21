@@ -170,40 +170,64 @@
         </SynchronousCommand>
 {% if '2008' in windows_distro_name %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "winrm quickconfig -quiet"</CommandLine>
-            <Description>Enable winrm on 2008</Description>
-            <Order>3</Order>
-            <RequiresUserInput>true</RequiresUserInput>
-        </SynchronousCommand>
-        <SynchronousCommand wcm:action="add">
-            <CommandLine>winrm set winrm/config/service/auth @{CredSSP="true"}</CommandLine>
-            <Description>Enable CredSSP 1</Description>
+            <CommandLine>cmd.exe /c winrm quickconfig -q</CommandLine>
+            <Description>winrm quickconfig -q</Description>
             <Order>4</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "Set-Item -Path WSMan:\localhost\Service\Auth\CredSSP -Value $true"</CommandLine>
-            <Description>Enable CredSSP 2</Description>
+            <CommandLine>cmd.exe /c winrm quickconfig -transport:http</CommandLine>
+            <Description>winrm quickconfig -transport:http</Description>
             <Order>5</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c winrm set winrm/config @{MaxTimeoutms="1800000"}</CommandLine>
+            <Description>Win RM MaxTimoutms</Description>
+            <Order>6</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c winrm set winrm/config/winrs @{MaxMemoryPerShellMB="800"}</CommandLine>
+            <Description>Win RM MaxMemoryPerShellMB</Description>
+            <Order>7</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c winrm set winrm/config/service @{AllowUnencrypted="true"}</CommandLine>
+            <Description>Win RM AllowUnencrypted</Description>
+            <Order>8</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c winrm set winrm/config/service/auth @{Basic="true"}</CommandLine>
+            <Description>Win RM auth Basic</Description>
+            <Order>9</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c winrm set winrm/config/client/auth @{Basic="true"}</CommandLine>
+            <Description>Win RM client auth Basic</Description>
+            <Order>10</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% endif %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1'))) -ForceNewSSLCert -EnableCredSSP"</CommandLine>
             <Description>Enable winrm</Description>
-            <Order>6</Order>
+            <Order>20</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Enable-WSManCredSSP -Role Server -Force"</CommandLine>
             <Description>Enable winrm server role</Description>
-            <Order>7</Order>
+            <Order>21</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-Item -Path 'WSMan:\localhost\Service\Auth\CredSSP' -Value $true"</CommandLine>
             <Description>Enable credssp authentication</Description>
-            <Order>8</Order>
+            <Order>22</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
