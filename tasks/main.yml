@@ -32,6 +32,7 @@
             install_updates: yes
             remove_apps: yes
             clean_up_components: yes
+            update_powershell: "{{ vm_update_powershell | default('no') }}"
           delegate_to: "{{ template_vm_ip_address }}"
 
     - include_tasks: stop_vm.yml
