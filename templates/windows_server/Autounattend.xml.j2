@@ -176,7 +176,7 @@
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/jborean93/ansible-windows/master/scripts/Upgrade-PowerShell.ps1'))) -Version 3.0"</CommandLine>
+            <CommandLine>cmd /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/jborean93/ansible-windows/master/scripts/Upgrade-PowerShell.ps1'))) -Version 3.0 -Username {{ local_account.name }} -Password {{ local_account.password }}"</CommandLine>
             <Description>Upgrade Powershell</Description>
             <Order>4</Order>
             <RequiresUserInput>true</RequiresUserInput>
