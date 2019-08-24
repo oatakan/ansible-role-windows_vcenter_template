@@ -49,6 +49,7 @@
     - include_tasks: convert_to_vm.yml
 
     - include_tasks: remove_vm.yml
+      when: remove_vm_on_error|bool
 
   always:
     - include_tasks: datastore_iso_remove.yml

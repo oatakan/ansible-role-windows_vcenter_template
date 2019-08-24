@@ -17,6 +17,8 @@ datastore_iso_folder: iso
 
 enable_auto_logon: yes
 
+remove_vm_on_error: yes
+
 windows_build_role: oatakan.windows_template_build
 
 local_administrator_password: Chang3MyP@ssw0rd21
