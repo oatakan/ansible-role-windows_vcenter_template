@@ -27,9 +27,9 @@
         hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
         username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
         password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
-        datacenter: cloud
+        datacenter: "{{ providers.vcenter.datacenter }}"
         validate_certs: no
-        name: wintarget1
+        name: "{{ template.name }}"
       register: vm_fact
       until: vm_fact.instance is defined and vm_fact.instance.hw_power_status == 'poweredOff'
       delay: 5
