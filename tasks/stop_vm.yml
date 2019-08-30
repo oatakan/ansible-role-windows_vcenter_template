@@ -1,5 +1,46 @@
 ---
 
+- block:
+
+    - name: run scheduled shutdown task
+      vmware_vm_shell:
+        hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+        username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+        password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+        datacenter: "{{ providers.vcenter.datacenter }}"
+        validate_certs: no
+        vm_id: "{{ instance.instance.uuid }}"
+        vm_id_type: instance_uuid
+        vm_username: "{{ unattend.local_accounts[0].name }}"
+        vm_password: "{{ unattend.local_accounts[0].password }}"
+        vm_shell: schtasks.exe
+        vm_shell_args: ' /Run /TN "sysprep-shutdown"'
+
+    - name: wait for server to stop responding
+      wait_for:
+        host: "{{ template_vm_ip_address }}"
+        port: "{{ vm_ansible_port | default('5986') }}"
+        timeout: 120
+        state: stopped
+
+    - name: wait for vm status to be poweredoff
+      vmware_guest_facts:
+        hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+        username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+        password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+        datacenter: cloud
+        validate_certs: no
+        name: wintarget1
+      register: vm_fact
+      until: vm_fact.instance is defined and vm_fact.instance.hw_power_status == 'poweredOff'
+      delay: 5
+      retries: 15
+
+  rescue:
+    - name: ignoring any error
+      debug:
+        msg: "ignoring error..."
+
 - name: stop vm
   vmware_guest:
     hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
