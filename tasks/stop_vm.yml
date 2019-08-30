@@ -9,8 +9,7 @@
         password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
         datacenter: "{{ providers.vcenter.datacenter }}"
         validate_certs: no
-        vm_id: "{{ instance.instance.uuid }}"
-        vm_id_type: instance_uuid
+        vm_id: "{{ template.name }}"
         vm_username: "{{ unattend.local_accounts[0].name }}"
         vm_password: "{{ unattend.local_accounts[0].password }}"
         vm_shell: schtasks.exe
