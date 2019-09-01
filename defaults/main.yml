@@ -37,6 +37,9 @@ vm_upgrade_powershell: no
 template_vm_name: windows-2019-standard-core-auto
 template_vm_root_disk_size: 30
 template_vm_root_disk_type: thin
+template_vm_memory: 4096
+template_vm_cpu: 2
+template_vm_guest_id: windows9Server64Guest
 template_vm_network_name: mgmt
 template_vm_ip_address: 192.168.1.99
 template_vm_netmask: 255.255.255.0
