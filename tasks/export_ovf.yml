@@ -22,3 +22,14 @@
   until: ovf.finished
   retries: "{{ instance_wait_retry_limit }}"
   delay: 10
+
+- name: create ova file
+  archive:
+    path: "{{ export_dir }}/{{ template.name }}/*"
+    dest: "{{ export_dir }}/{{ template.name }}.ova"
+    format: tar
+
+- name: remove exported temp files
+  file:
+    path: "{{ export_dir }}/{{ template.name }}"
+    state: absent
