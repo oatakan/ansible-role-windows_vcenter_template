@@ -33,3 +33,15 @@
   file:
     path: "{{ export_dir }}/{{ template.name }}"
     state: absent
+
+# this is just to close the loop, you can change this implementation to upload ova to some other system/storage
+- name: upload ova file to datastore
+  vsphere_copy:
+    host: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    login: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    src: "{{ export_dir }}/{{ template.name }}.ova"
+    datacenter: "{{ providers.vcenter.datacenter }}"
+    datastore: "{{ providers.vcenter.datastore | default('datastore2') }}"
+    path: "{{ datastore_ova_folder }}/{{ template.name }}.ova"
+    validate_certs: no

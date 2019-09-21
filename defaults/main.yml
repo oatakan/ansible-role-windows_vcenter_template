@@ -14,6 +14,7 @@ template_found: no
 export_ovf: no
 
 datastore_iso_folder: iso
+datastore_ova_folder: ova
 
 enable_auto_logon: yes
 
