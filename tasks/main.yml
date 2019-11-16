@@ -17,23 +17,28 @@
 
     - include_tasks: provision_vm.yml
 
+    - name: add host
+      add_host:
+        hostname: template_host
+        ansible_host: "{{ template_vm_ip_address }}"
+        ansible_user: "{{ unattend.local_accounts[0].name }}"
+        ansible_password: "{{ unattend.local_accounts[0].password }}"
+        ansible_port: "{{ vm_ansible_port | default('5986') }}"
+        ansible_connection: winrm
+        ansible_winrm_transport: "{{ vm_ansible_winrm_transport | default('credssp') }}"
+        ansible_winrm_server_cert_validation: ignore
+        ansible_winrm_operation_timeout_sec: 250
+        ansible_winrm_read_timeout_sec: 280
+
     - include_role:
         name: "{{ windows_build_role }}"
         apply:
           vars:
-            ansible_user: "{{ unattend.local_accounts[0].name }}"
-            ansible_password: "{{ unattend.local_accounts[0].password }}"
-            ansible_port: "{{ vm_ansible_port | default('5986') }}"
-            ansible_connection: winrm
-            ansible_winrm_transport: "{{ vm_ansible_winrm_transport | default('credssp') }}"
-            ansible_winrm_server_cert_validation: ignore
-            ansible_winrm_operation_timeout_sec: 250
-            ansible_winrm_read_timeout_sec: 280
             install_updates: yes
             remove_apps: yes
             clean_up_components: yes
             upgrade_powershell: "{{ vm_upgrade_powershell | default('no') }}"
-          delegate_to: "{{ template_vm_ip_address }}"
+          delegate_to: template_host
 
     - include_tasks: stop_vm.yml
 
