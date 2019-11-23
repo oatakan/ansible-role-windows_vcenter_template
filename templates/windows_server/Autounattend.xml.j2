@@ -74,7 +74,9 @@
                 <FullName>Ansible</FullName>
                 <Organization>Your Org.</Organization>
                 <ProductKey>
-                    <Key>{{ unattend.product_key | default('') }}</Key>
+{% if unattend.product_key is defined and unattend.product_key|length %}
+                    <Key>{{ unattend.product_key }}</Key>
+{% endif %}
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
             </UserData>
