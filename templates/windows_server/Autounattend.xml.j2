@@ -23,6 +23,7 @@
         <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
             <DiskConfiguration>
                 <Disk wcm:action="add">
+{% if template_vm_efi is undefined or not template_vm_efi|bool %}
                     <ModifyPartitions>
                         <ModifyPartition wcm:action="modify">
                             <Active>true</Active>
@@ -53,6 +54,57 @@
                             <Extend>true</Extend>
                         </CreatePartition>
                     </CreatePartitions>
+{% else %}
+                    <ModifyPartitions>
+                        <ModifyPartition wcm:action="modify">
+                            <Order>1</Order>
+                            <Format>NTFS</Format>
+                            <PartitionID>1</PartitionID>
+                            <Label>WINRE</Label>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="modify">
+                            <Order>2</Order>
+                            <Format>FAT32</Format>
+                            <PartitionID>2</PartitionID>
+                            <Label>System</Label>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="modify">
+                            <Order>3</Order>
+                            <PartitionID>3</PartitionID>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="modify">
+                            <Format>NTFS</Format>
+                            <Letter>C</Letter>
+                            <Order>4</Order>
+                            <PartitionID>4</PartitionID>
+                            <Label>{{ windows_distro_name[0:31] }}</Label>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                    <CreatePartitions>
+                        <CreatePartition wcm:action="add">
+                            <Order>1</Order>
+                            <Type>Primary</Type>
+                            <Size>300</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>2</Order>
+                            <Type>EFI</Type>
+                            <Size>100</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>3</Order>
+                            <Type>MSR</Type>
+                            <Size>128</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>4</Order>
+                            <Type>Primary</Type>
+                            <Extend>true</Extend>
+                        </CreatePartition>
+                    </CreatePartitions>
+{% endif %}
                 </Disk>
             </DiskConfiguration>
             <ImageInstall>
@@ -65,7 +117,11 @@
                     </InstallFrom>
                     <InstallTo>
                         <DiskID>0</DiskID>
+{% if template_vm_efi is undefined or not template_vm_efi|bool %}
                         <PartitionID>2</PartitionID>
+{% else %}
+                        <PartitionID>4</PartitionID>
+{% endif %}
                     </InstallTo>
                 </OSImage>
             </ImageInstall>

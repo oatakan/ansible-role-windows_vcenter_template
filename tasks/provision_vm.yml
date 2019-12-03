@@ -20,6 +20,7 @@
       memory_mb: "{{ template.memory }}"
       num_cpus: "{{ template.cpu }}"
       scsi: lsilogicsas
+      boot_firmware: "{{ template.boot_firmware | default(omit) }}"
     guest_id: "{{ template.guest_id }}"
     networks: "{{ template.networks }}"
   async: 7200
