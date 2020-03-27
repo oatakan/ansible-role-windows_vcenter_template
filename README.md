@@ -44,6 +44,14 @@ Including an example of how to use your role (for instance, with variables passe
         template_vm_guest_id: windows9Server64Guest
         template_vm_memory: 4096
         template_vm_efi: false
+        template_vm_network_name: mgmt
+        template_vm_ip_address: 192.168.10.99  # static ip is required
+        template_vm_netmask: 255.255.255.0
+        template_vm_gateway: 192.168.10.254
+        template_vm_domain: example.com
+        template_vm_dns_servers:
+          - 8.8.4.4
+          - 8.8.8.8
         iso_file_name: '' # name of the iso file, make sure it's uploaded a datastore
         datastore_iso_folder: iso # folder name on datastore where iso file resides
         iso_image_index: '' # put index number here from the order inside the iso, for example 1 - standard, 2 - core etc

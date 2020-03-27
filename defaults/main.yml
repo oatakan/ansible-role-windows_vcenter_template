@@ -45,12 +45,12 @@ template_vm_cpu: 2
 template_vm_guest_id: windows9Server64Guest
 template_vm_efi: no
 template_vm_network_name: mgmt
-template_vm_ip_address: 192.168.1.99
+template_vm_ip_address: 192.168.10.99
 template_vm_netmask: 255.255.255.0
-template_vm_gateway: 192.168.1.254
-template_vm_domain: home.ad
+template_vm_gateway: 192.168.10.254
+template_vm_domain: example.com
 template_vm_dns_servers:
-  - 192.168.1.254
+  - 8.8.4.4
   - 8.8.8.8
 
 vcenter_datacenter: cloud
