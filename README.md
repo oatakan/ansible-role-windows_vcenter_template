@@ -11,6 +11,8 @@ You need to have the following packages installed on your control machine:
 
 - mkisofs
 
+Before you can use this role, you need to make sure you have Windows install media iso file uploaded to a datastore on your vcenter environment.
+
 Role Variables
 --------------
 
@@ -36,16 +38,30 @@ Including an example of how to use your role (for instance, with variables passe
       vars:
         template_force: yes
         export_ovf: no
-        providers:
-          vcenter:
-            cluster: mylab
-            datacenter: cloud
-            datastore: datastore2
-            folder: template
-            resource_pool: manageto
+        windows_distro_name: 2019_standard # this needs to be one of the standard values see 'os_short_names' var
+        template_vm_name: win2019_template
+        template_vm_root_disk_size: 30
+        template_vm_guest_id: windows9Server64Guest
+        template_vm_memory: 4096
+        template_vm_efi: false
+        iso_file_name: '' # name of the iso file, make sure it's uploaded a datastore
+        datastore_iso_folder: iso # folder name on datastore where iso file resides
+        iso_image_index: '' # put index number here from the order inside the iso, for example 1 - standard, 2 - core etc
+        iso_product_key: ''
+        vm_upgrade_powershell: false # only needed for 2008 R2
+        install_updates: false # it will take longer to build with the updates, set to true if you want the updates
+        vcenter_datacenter: cloud
+        vcenter_cluster: mylab
+        vcenter_resource_pool: pool1
+        vcenter_folder: template
+        vcenter_datastore: datastore1
     
       roles:
         - oatakan.windows_vcenter_template
+
+For disconnected environments, you can overwrite this variable to point to a local copy of a script to enable winrm:
+
+winrm_enable_script_url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
 
 License
 -------

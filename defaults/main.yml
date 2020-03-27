@@ -31,6 +31,8 @@ iso_file_name: 17763.253.190108-0006.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_
 windows_sysprep_template_folder: windows_server
 iso_image_index: 1
 
+winrm_enable_script_url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+
 vm_ansible_port: 5986
 vm_ansible_winrm_transport: credssp
 vm_upgrade_powershell: no
@@ -56,3 +58,12 @@ vcenter_cluster: mylab
 vcenter_resource_pool: manageto
 vcenter_folder: template
 vcenter_datastore: datastore2
+
+os_short_names:
+  2008_r2_standard: 2k8R2
+  2012_r2_standard: 2k12R2
+  2012_r2_datacenter: 2k12R2
+  2016_standard: 2k16
+  2016_standard_core: 2k16
+  2019_standard: 2k19
+  2019_standard_core: 2k19
