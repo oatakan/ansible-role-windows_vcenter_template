@@ -1,7 +1,7 @@
 ---
 
 - name: gather only registered virtual machine templates
-  vmware_vm_facts:
+  vmware_vm_info:
     hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
     username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
     password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"

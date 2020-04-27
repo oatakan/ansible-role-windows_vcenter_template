@@ -2,8 +2,8 @@
 
 - name: upload iso file to datastore
   vsphere_copy:
-    host: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-    login: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
     password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
     src: "{{ playbook_dir }}/{{ temp_directory }}/windows_{{ windows_distro_name }}_autounattend_autogen.iso"
     datacenter: "{{ providers.vcenter.datacenter }}"
