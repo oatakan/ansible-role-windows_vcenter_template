@@ -29,6 +29,7 @@
         ansible_winrm_server_cert_validation: ignore
         ansible_winrm_operation_timeout_sec: 250
         ansible_winrm_read_timeout_sec: 280
+        ansible_win_async_startup_timeout: 60
 
     - include_role:
         name: "{{ windows_build_role }}"
