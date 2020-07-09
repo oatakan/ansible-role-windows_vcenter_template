@@ -1,5 +1,6 @@
 ---
 
+install_updates: yes
 instance_wait_retry_limit: 300
 instance_wait_connection_timeout: 400
 
