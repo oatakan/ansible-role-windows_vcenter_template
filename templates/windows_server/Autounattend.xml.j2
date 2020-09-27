@@ -229,7 +229,7 @@
         </SynchronousCommand>
 {% else %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "([Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))).GetNetworkConnections() | % {$_.GetNetwork().SetCategory(1)}"</CommandLine>
+            <CommandLine>cmd.exe /c powershell –EncodedCommand {{ set_network_to_private | b64encode(encoding='utf-16-le') }}</CommandLine>
             <Description>Set network connection profile to private</Description>
             <Order>2</Order>
             <RequiresUserInput>true</RequiresUserInput>

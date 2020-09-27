@@ -34,6 +34,8 @@ iso_image_index: 1
 
 winrm_enable_script_url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
 
+set_network_to_private: '([Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))).GetNetworkConnections() | % {$_.GetNetwork().SetCategory(1)}'
+
 vm_ansible_port: 5986
 vm_ansible_winrm_transport: credssp
 vm_upgrade_powershell: no
