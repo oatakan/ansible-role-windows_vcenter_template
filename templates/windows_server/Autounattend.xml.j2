@@ -215,18 +215,25 @@
 {% endif %}
       <FirstLogonCommands>
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
-            <Description>Set network connection profile to private</Description>
+            <CommandLine>cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"</CommandLine>
+            <Description>Set Execution Policy 64 Bit</Description>
             <Order>1</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+{% if not '2008' in windows_distro_name %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"</CommandLine>
-            <Description>Set Execution Policy 64 Bit</Description>
+            <CommandLine>cmd.exe /c powershell -Command "Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
+            <Description>Set network connection profile to private</Description>
             <Order>2</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
-{% if '2008' in windows_distro_name %}
+{% else %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -Command "([Activator]::CreateInstance([Type]::GetTypeFromCLSID([Guid]"{DCB00C01-570F-4A9B-8D69-199FDBA5723B}"))).GetNetworkConnections() | % {$_.GetNetwork().SetCategory(1)}"</CommandLine>
+            <Description>Set network connection profile to private</Description>
+            <Order>2</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c winrm quickconfig -q</CommandLine>
             <Description>winrm quickconfig -q</Description>
