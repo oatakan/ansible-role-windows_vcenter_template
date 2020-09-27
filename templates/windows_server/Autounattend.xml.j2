@@ -131,7 +131,7 @@
                 <Organization>Your Org.</Organization>
                 <ProductKey>
 {% if unattend.product_key is defined and unattend.product_key|length %}
-                    <Key>{{ unattend.product_key }}</Key>
+                    <Key>{{ unattend.product_key | trim }}</Key>
 {% endif %}
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
