@@ -40,7 +40,6 @@
             clean_up_components: yes
             upgrade_powershell: "{{ vm_upgrade_powershell | default('no') }}"
           delegate_to: template_host
-          delegate_facts: true
 
     - include_tasks: stop_vm.yml
 
