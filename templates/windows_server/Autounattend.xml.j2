@@ -305,6 +305,14 @@
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% endif %}
+{% if '2016' in windows_distro_name %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c reg add HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319 /v SchUseStrongCrypto /t REG_DWORD /d 1 /reg:64 /f</CommandLine>
+            <Description>Configure security protocol</Description>
+            <Order>19</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('{{ winrm_enable_script_url }}'))) -ForceNewSSLCert -EnableCredSSP"</CommandLine>
             <Description>Enable winrm</Description>
