@@ -33,3 +33,4 @@
       loop:
         - windows_{{ windows_distro_name }}_autounattend_autogen.iso
         - Autounattend.xml
+        - ConfigureRemotingForAnsible.ps1
