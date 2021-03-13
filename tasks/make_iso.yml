@@ -10,8 +10,17 @@
         src: "{{ windows_sysprep_template_folder }}/Autounattend.xml.j2"
         dest: "{{ temp_directory }}/Autounattend.xml"
 
+    - name: download ConfigureRemotingForAnsible.ps1 script
+      get_url:
+         url: "{{ winrm_enable_script_url }}"
+         dest: "{{ temp_directory }}/ConfigureRemotingForAnsible.ps1"
+      register: download_script
+      until: download_script is success
+      delay: 3
+      retries: 5
+
     - name: create iso
-      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ windows_distro_name }}_autounattend_autogen.iso Autounattend.xml
+      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ windows_distro_name }}_autounattend_autogen.iso Autounattend.xml ConfigureRemotingForAnsible.ps1
       args:
         chdir: "{{ playbook_dir }}/{{ temp_directory }}"
 

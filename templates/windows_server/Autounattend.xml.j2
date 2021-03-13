@@ -314,7 +314,7 @@
         </SynchronousCommand>
 {% endif %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -Command "& $([scriptblock]::Create((New-Object Net.WebClient).DownloadString('{{ winrm_enable_script_url }}'))) -ForceNewSSLCert -EnableCredSSP"</CommandLine>
+            <CommandLine>cmd.exe /c powershell -ExecutionPolicy ByPass -File E:\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP</CommandLine>
             <Description>Enable winrm</Description>
             <Order>20</Order>
             <RequiresUserInput>true</RequiresUserInput>
