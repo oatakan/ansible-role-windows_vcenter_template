@@ -57,6 +57,7 @@
 {% else %}
                     <ModifyPartitions>
                         <ModifyPartition wcm:action="modify">
+                            <Active>true</Active>
                             <Order>1</Order>
                             <Format>NTFS</Format>
                             <PartitionID>1</PartitionID>
@@ -73,6 +74,7 @@
                             <PartitionID>3</PartitionID>
                         </ModifyPartition>
                         <ModifyPartition wcm:action="modify">
+                            <Active>false</Active>
                             <Format>NTFS</Format>
                             <Letter>C</Letter>
                             <Order>4</Order>
