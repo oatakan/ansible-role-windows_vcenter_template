@@ -305,6 +305,24 @@
             <Order>15</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c dism /online /enable-feature /featurename:NetFx2-ServerCore</CommandLine>
+            <Description>Enable NetFx2-ServerCore feature</Description>
+            <Order>16</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c dism /online /enable-feature /featurename:MicrosoftWindowsPowerShell</CommandLine>
+            <Description>Enable MicrosoftWindowsPowerShell feature</Description>
+            <Order>17</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c dism /online /enable-feature /featurename:ServerManager-PSH-Cmdlets</CommandLine>
+            <Description>Enable ServerManager-PSH-Cmdlets feature</Description>
+            <Order>18</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
 {% endif %}
 {% if '2016' in windows_distro_name %}
         <SynchronousCommand wcm:action="add">
