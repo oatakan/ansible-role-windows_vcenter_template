@@ -38,7 +38,7 @@ Including an example of how to use your role (for instance, with variables passe
       vars:
         template_force: yes
         export_ovf: no
-        windows_distro_name: 2019_standard # this needs to be one of the standard values see 'os_short_names' var
+        distro_name: win2019 # this needs to be one of the standard values see 'os_short_names' var
         template_vm_name: win2019_template
         template_vm_root_disk_size: 30
         template_vm_guest_id: windows9Server64Guest

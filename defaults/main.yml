@@ -27,7 +27,7 @@ local_administrator_password: Chang3MyP@ssw0rd21
 local_account_username: ansible
 local_account_password: Chang3MyP@ssw0rd21
 
-windows_distro_name: 2019_standard_core
+distro_name: win2019
 iso_file_name: 17763.253.190108-0006.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso
 windows_sysprep_template_folder: windows_server
 iso_image_index: 1
@@ -63,10 +63,8 @@ vcenter_folder: template
 vcenter_datastore: datastore2
 
 os_short_names:
-  2008_r2_standard: 2k8R2
-  2012_r2_standard: 2k12R2
-  2012_r2_datacenter: 2k12R2
-  2016_standard: 2k16
-  2016_standard_core: 2k16
-  2019_standard: 2k19
-  2019_standard_core: 2k19
+  win2008: 2k8R2
+  win2012: 2k12R2
+  win2016: 2k16
+  win2019: 2k19
+  win10: 10

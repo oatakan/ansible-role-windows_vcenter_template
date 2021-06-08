@@ -2,7 +2,7 @@
 
 temp_directory: tmp{{ awx_job_id | default('') }}
 
-iso_file: "{{ datastore_iso_folder }}/windows_{{ windows_distro_name }}_autounattend{{ awx_job_id | default('') }}.iso"
+iso_file: "{{ datastore_iso_folder }}/windows_{{ distro_name }}_autounattend{{ awx_job_id | default('') }}.iso"
 
 export_dir: "{{ playbook_dir }}/{{ temp_directory }}"
 

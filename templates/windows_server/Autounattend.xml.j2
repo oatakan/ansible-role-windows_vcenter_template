@@ -34,7 +34,7 @@
                         </ModifyPartition>
                         <ModifyPartition wcm:action="modify">
                             <Format>NTFS</Format>
-                            <Label>{{ windows_distro_name[0:31] }}</Label>
+                            <Label>{{ distro_name[0:31] }}</Label>
                             <Letter>C</Letter>
                             <Order>2</Order>
                             <PartitionID>2</PartitionID>
@@ -78,7 +78,7 @@
                             <Letter>C</Letter>
                             <Order>4</Order>
                             <PartitionID>4</PartitionID>
-                            <Label>{{ windows_distro_name[0:31] }}</Label>
+                            <Label>{{ distro_name[0:31] }}</Label>
                         </ModifyPartition>
                     </ModifyPartitions>
                     <DiskID>0</DiskID>
@@ -158,7 +158,7 @@
     <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <OOBE>
         <HideEULAPage>true</HideEULAPage>
-{% if not '2008' in windows_distro_name %}
+{% if not '2008' in distro_name %}
         <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
         <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
         <HideLocalAccountScreen>true</HideLocalAccountScreen>
@@ -219,7 +219,7 @@
             <Order>1</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
-{% if not '2008' in windows_distro_name %}
+{% if not '2008' in distro_name %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-NetConnectionProfile -NetworkCategory Private"</CommandLine>
             <Description>Set network connection profile to private</Description>
@@ -330,7 +330,7 @@
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% endif %}
-{% if '2016' in windows_distro_name %}
+{% if '2016' in distro_name %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c reg add HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319 /v SchUseStrongCrypto /t REG_DWORD /d 1 /reg:64 /f</CommandLine>
             <Description>Configure security protocol</Description>
@@ -357,7 +357,7 @@
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
-{% if not '2008' in windows_distro_name %}
+{% if not '2008' in distro_name %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress –IPAddress {{ template.networks[0].ip }} -DefaultGateway {{ template.networks[0].gateway }} -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ipaddr('prefix') }} -InterfaceIndex (Get-NetAdapter).InterfaceIndex"</CommandLine>
             <Description>Set static ip</Description>
@@ -373,7 +373,7 @@
         </SynchronousCommand>
 {% endif %}
 {% if template.networks[0].dns_servers is defined %}
-{% if not '2008' in windows_distro_name %}
+{% if not '2008' in distro_name %}
         <SynchronousCommand wcm:action="add">
             <CommandLine>cmd.exe /c powershell -Command "Set-DNSClientServerAddress –InterfaceIndex (Get-NetAdapter).InterfaceIndex –ServerAddresses {{ template.networks[0].dns_servers|join(',') }}"</CommandLine>
             <Description>Set static ip</Description>

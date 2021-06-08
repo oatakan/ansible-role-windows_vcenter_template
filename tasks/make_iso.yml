@@ -20,7 +20,7 @@
       retries: 5
 
     - name: create iso
-      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ windows_distro_name }}_autounattend_autogen.iso Autounattend.xml ConfigureRemotingForAnsible.ps1
+      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ distro_name }}_autounattend_autogen.iso Autounattend.xml ConfigureRemotingForAnsible.ps1
       args:
         chdir: "{{ playbook_dir }}/{{ temp_directory }}"
 
@@ -31,6 +31,6 @@
         path: "{{ temp_directory }}/{{ item }}"
         state: absent
       loop:
-        - windows_{{ windows_distro_name }}_autounattend_autogen.iso
+        - windows_{{ distro_name }}_autounattend_autogen.iso
         - Autounattend.xml
         - ConfigureRemotingForAnsible.ps1
