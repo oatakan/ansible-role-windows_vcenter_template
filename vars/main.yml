@@ -30,6 +30,8 @@ providers:
 
 autounattend_cdrom:
   type: iso
+  controller_number: 0
+  unit_number: 0
   iso_path: "[{{ providers.vcenter.datastore | default('datastore1') }}] {{ iso_file }}"
 
 template:
@@ -55,4 +57,6 @@ template:
       dns_servers: "{{ template_vm_dns_servers }}"
   cdrom:
     - type: iso
+      controller_number: 0
+      unit_number: 1
       iso_path: "[{{ providers.vcenter.datastore | default('datastore1') }}] {{ datastore_iso_folder }}/{{ iso_file_name }}"
