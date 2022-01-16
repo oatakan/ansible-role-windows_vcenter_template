@@ -12,4 +12,7 @@
     name: "{{ template.name }}"
     is_template: yes
     state: present
-  when: template is defined
+  when:
+    - instance is defined
+    - instance.instance is defined
+    - template is defined
