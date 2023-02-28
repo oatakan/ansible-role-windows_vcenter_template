@@ -30,11 +30,12 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
+    ---
     - name: create a vmware windows template
       hosts: all
-      gather_facts: False
+      gather_facts: false
       connection: local
-      become: no
+      become: false
       vars:
         template_force: yes
         export_ovf: no
@@ -66,6 +67,17 @@ Including an example of how to use your role (for instance, with variables passe
     
       roles:
         - oatakan.windows_vcenter_template
+
+    ---
+    - name: delete a vmware windows template
+      hosts: all
+      gather_facts: false
+      connection: local
+      become: false
+
+      roles:
+        - role: oatakan.windows_vcenter_template
+          role_action: deprovision
 
 For disconnected environments, you can overwrite this variable to point to a local copy of a script to enable winrm:
 

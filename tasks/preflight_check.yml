@@ -4,6 +4,30 @@
   set_fact:
     template_found: false
 
+- block:
+    - name: check if iso file exists
+      vsphere_file:
+        host: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+        username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+        password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+        validate_certs: no
+        datacenter: "{{ providers.vcenter.datacenter }}"
+        datastore: "{{ providers.vcenter.datastore }}"
+        path: "{{ datastore_iso_folder }}/{{ iso_file_name }}"
+        state: file
+      register: os_iso_file
+      failed_when: false
+
+    - name: check vcenter information
+      community.vmware.vmware_about_info:
+        hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
+        username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
+        password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+        validate_certs: no
+      register: vcenter_about_info
+      failed_when: false
+  when: role_action == 'provision'
+
 - name: gather only registered virtual machine templates
   vmware_vm_info:
     hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
@@ -11,7 +35,9 @@
     password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
     validate_certs: no
     vm_type: template
+    vm_name: "{{ template.name }}"
   register: template_facts
+  failed_when: false
 
 - block:
     - name: set template_found to true
@@ -21,7 +47,7 @@
     - name: fail with message
       fail:
         msg: "Existing template found on vcenter: {{ template.name }}"
-      when: not template_force|bool
+      when: not remove_template
   when:
     - ansible_version.full is version('2.8.0', '<')
     - template_facts is success
@@ -37,7 +63,7 @@
     - name: fail with message
       fail:
         msg: "Existing template found on vcenter: {{ template.name }}"
-      when: not template_force|bool
+      when: not remove_template
   when:
     - ansible_version.full is version('2.8.0', '>=')
     - template_facts is success

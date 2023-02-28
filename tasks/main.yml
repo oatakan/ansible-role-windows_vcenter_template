@@ -9,59 +9,8 @@
     - include_tasks: remove_vm.yml
 
   when:
-    - template_force|bool
+    - remove_template
     - template_found|bool
 
-- block:
-    - include_tasks: make_iso.yml
-
-    - include_tasks: provision_vm.yml
-
-    - name: add host
-      add_host:
-        hostname: template_host
-        ansible_host: "{{ template_vm_ip_address }}"
-        ansible_user: "{{ unattend.local_accounts[0].name }}"
-        ansible_password: "{{ unattend.local_accounts[0].password }}"
-        ansible_port: "{{ vm_ansible_port | default('5986') }}"
-        ansible_connection: winrm
-        ansible_winrm_transport: "{{ vm_ansible_winrm_transport | default('credssp') }}"
-        ansible_winrm_server_cert_validation: ignore
-        ansible_winrm_operation_timeout_sec: 250
-        ansible_winrm_read_timeout_sec: 280
-        ansible_win_async_startup_timeout: 60
-
-    - include_role:
-        name: "{{ windows_build_role }}"
-        apply:
-          vars:
-            install_updates: yes
-            remove_apps: yes
-            clean_up_components: yes
-            upgrade_powershell: "{{ vm_upgrade_powershell | default('no') }}"
-          delegate_to: template_host
-
-    - include_tasks: stop_vm.yml
-
-    - include_tasks: create_snapshot.yml
-      when: create_snapshot|bool
-
-    - include_tasks: convert_to_template.yml
-
-    - include_tasks: export_ovf.yml
-      when: export_ovf|bool
-
-  rescue:
-    - include_tasks: convert_to_vm.yml
-
-    - include_tasks: remove_vm.yml
-      when: remove_vm_on_error|bool
-
-  always:
-    - include_tasks: datastore_iso_remove.yml
-
-    - name: remove temporary directory
-      file:
-        path: "{{ temp_directory }}"
-        state: absent
-      when: not export_ovf|bool
+- include_tasks: provision.yml
+  when: role_action == 'provision'

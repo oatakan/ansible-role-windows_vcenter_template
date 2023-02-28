@@ -6,6 +6,8 @@ iso_file: "{{ datastore_iso_folder }}/windows_{{ distro_name }}_autounattend{{ a
 
 export_dir: "{{ playbook_dir }}/{{ temp_directory }}"
 
+remove_template: "{{ true if (role_action == 'deprovision' or template_force|bool) else false }}"
+
 unattend:
   administrator_password: "{{ local_administrator_password }}"
   local_accounts:
