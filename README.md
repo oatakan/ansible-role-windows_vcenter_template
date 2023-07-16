@@ -81,7 +81,7 @@ Including an example of how to use your role (for instance, with variables passe
 
 For disconnected environments, you can overwrite this variable to point to a local copy of a script to enable winrm:
 
-winrm_enable_script_url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
+winrm_enable_script_url: https://raw.githubusercontent.com/ansible/ansible-documentation/devel/examples/scripts/ConfigureRemotingForAnsible.ps1
 
 License
 -------
