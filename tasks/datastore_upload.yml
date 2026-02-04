@@ -1,12 +1,12 @@
 ---
 
-- name: upload iso file to datastore
-  vsphere_copy:
-    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
-    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+- name: Upload Autounattend ISO to datastore
+  community.vmware.vsphere_copy:
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
     src: "{{ playbook_dir }}/{{ temp_directory }}/windows_{{ distro_name }}_autounattend_autogen.iso"
     datacenter: "{{ providers.vcenter.datacenter }}"
     datastore: "{{ providers.vcenter.datastore | default('datastore2') }}"
     path: "{{ iso_file }}"
-    validate_certs: no
+    validate_certs: false

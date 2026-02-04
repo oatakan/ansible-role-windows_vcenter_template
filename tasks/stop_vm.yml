@@ -1,21 +1,21 @@
 ---
 
-- block:
-
-    - name: wait for server to stop responding
-      wait_for:
+- name: Wait for guest shutdown (best-effort)
+  block:
+    - name: Wait for server to stop responding
+      ansible.builtin.wait_for:
         host: "{{ template_vm_ip_address }}"
         port: "{{ vm_ansible_port | default('5986') }}"
         timeout: 120
         state: stopped
 
-    - name: wait for vm status to be poweredoff
-      vmware_guest_info:
-        hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-        username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
-        password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+    - name: Wait for VM power state to be poweredOff
+      community.vmware.vmware_guest_info:
+        hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+        username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+        password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
         datacenter: "{{ providers.vcenter.datacenter }}"
-        validate_certs: no
+        validate_certs: false
         name: "{{ template.name }}"
       register: vm_fact
       until: vm_fact.instance is defined and vm_fact.instance.hw_power_status == 'poweredOff'
@@ -23,16 +23,16 @@
       retries: 15
 
   rescue:
-    - name: ignoring any error
-      debug:
+    - name: Ignore shutdown wait errors
+      ansible.builtin.debug:
         msg: "ignoring error..."
 
-- name: stop vm
-  vmware_guest:
-    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
-    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
-    validate_certs: no
+- name: Stop VM and detach ISO media
+  community.vmware.vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
+    validate_certs: false
     datacenter: "{{ providers.vcenter.datacenter }}"
     cluster: "{{ providers.vcenter.cluster }}"
     uuid: "{{ instance.instance.uuid | default(omit) }}"
@@ -44,20 +44,20 @@
   register: stop
   when: template is defined
 
-- name: wait for instance to stop
-  async_status:
+- name: Wait for instance to stop
+  ansible.builtin.async_status:
     jid: "{{ stop.ansible_job_id }}"
   register: instance
   until: instance.finished
   retries: "{{ instance_wait_retry_limit }}"
   delay: 10
 
-- name: reconfigure vm
-  vmware_guest:
-    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
-    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
-    validate_certs: no
+- name: Remove CD-ROM devices
+  community.vmware.vmware_guest:
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
+    validate_certs: false
     datacenter: "{{ providers.vcenter.datacenter }}"
     cluster: "{{ providers.vcenter.cluster }}"
     uuid: "{{ instance.instance.uuid | default(omit) }}"

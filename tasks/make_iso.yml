@@ -1,33 +1,51 @@
 ---
-- block:
-    - name: create temporary directory
-      file:
+
+- name: Build and upload Autounattend ISO
+  block:
+    - name: Create temporary directory
+      ansible.builtin.file:
         path: "{{ temp_directory }}"
         state: directory
+        mode: "0700"
 
-    - name: create Autounattend.xml file
-      template:
+    - name: Render Autounattend.xml
+      ansible.builtin.template:
         src: "{{ windows_sysprep_template_folder }}/Autounattend.xml.j2"
         dest: "{{ temp_directory }}/Autounattend.xml"
+        mode: "0600"
 
-    - name: download ConfigureRemotingForAnsible.ps1 script
-      get_url:
-         url: "{{ winrm_enable_script_url }}"
-         dest: "{{ temp_directory }}/ConfigureRemotingForAnsible.ps1"
+    - name: Download ConfigureRemotingForAnsible.ps1
+      ansible.builtin.get_url:
+        url: "{{ winrm_enable_script_url }}"
+        dest: "{{ temp_directory }}/ConfigureRemotingForAnsible.ps1"
+        mode: "0600"
       register: download_script
       until: download_script is success
       delay: 3
       retries: 5
 
-    - name: create iso
-      command: mkisofs -V ADDISO -r -iso-level 4 -o {{ playbook_dir }}/{{ temp_directory }}/windows_{{ distro_name }}_autounattend_autogen.iso Autounattend.xml ConfigureRemotingForAnsible.ps1
+    - name: Create Autounattend ISO
+      ansible.builtin.command:
+        argv:
+          - mkisofs
+          - -V
+          - ADDISO
+          - -r
+          - -iso-level
+          - "4"
+          - -o
+          - "{{ playbook_dir }}/{{ temp_directory }}/windows_{{ distro_name }}_autounattend_autogen.iso"
+          - Autounattend.xml
+          - ConfigureRemotingForAnsible.ps1
       args:
         chdir: "{{ playbook_dir }}/{{ temp_directory }}"
+        creates: "{{ playbook_dir }}/{{ temp_directory }}/windows_{{ distro_name }}_autounattend_autogen.iso"
 
-    - include_tasks: datastore_upload.yml
+    - name: Upload Autounattend ISO to datastore
+      ansible.builtin.include_tasks: datastore_upload.yml
   always:
-    - name: remove temporary files
-      file:
+    - name: Remove temporary files
+      ansible.builtin.file:
         path: "{{ temp_directory }}/{{ item }}"
         state: absent
       loop:

@@ -1,12 +1,15 @@
 ---
 
-- block:
-    - include_tasks: make_iso.yml
+- name: Provision and build Windows template
+  block:
+    - name: Build and upload Autounattend ISO
+      ansible.builtin.include_tasks: make_iso.yml
 
-    - include_tasks: provision_vm.yml
+    - name: Provision VM on vCenter
+      ansible.builtin.include_tasks: provision_vm.yml
 
-    - name: add host
-      add_host:
+    - name: Add temporary WinRM host
+      ansible.builtin.add_host:
         hostname: template_host
         ansible_host: "{{ template_vm_ip_address }}"
         ansible_user: "{{ unattend.local_accounts[0].name }}"
@@ -19,37 +22,45 @@
         ansible_winrm_read_timeout_sec: 280
         ansible_win_async_startup_timeout: 60
 
-    - include_role:
+    - name: Run in-guest build role over WinRM
+      ansible.builtin.include_role:
         name: "{{ windows_build_role }}"
         apply:
           vars:
-            install_updates: yes
-            remove_apps: yes
-            clean_up_components: yes
+            install_updates: true
+            remove_apps: true
+            clean_up_components: true
             upgrade_powershell: "{{ vm_upgrade_powershell | default('no') }}"
           delegate_to: template_host
 
-    - include_tasks: stop_vm.yml
+    - name: Power off VM and remove CD-ROMs
+      ansible.builtin.include_tasks: stop_vm.yml
 
-    - include_tasks: create_snapshot.yml
-      when: create_snapshot|bool
+    - name: Create snapshot (optional)
+      ansible.builtin.include_tasks: create_snapshot.yml
+      when: create_snapshot | bool
 
-    - include_tasks: convert_to_template.yml
+    - name: Convert VM to template
+      ansible.builtin.include_tasks: convert_to_template.yml
 
-    - include_tasks: export_ovf.yml
-      when: export_ovf|bool
+    - name: Export OVF/OVA (optional)
+      ansible.builtin.include_tasks: export_ovf.yml
+      when: export_ovf | bool
 
   rescue:
-    - include_tasks: convert_to_vm.yml
+    - name: Convert back to VM (rescue)
+      ansible.builtin.include_tasks: convert_to_vm.yml
 
-    - include_tasks: remove_vm.yml
-      when: remove_vm_on_error|bool
+    - name: Remove VM (rescue)
+      ansible.builtin.include_tasks: remove_vm.yml
+      when: remove_vm_on_error | bool
 
   always:
-    - include_tasks: datastore_iso_remove.yml
+    - name: Remove Autounattend ISO from datastore
+      ansible.builtin.include_tasks: datastore_iso_remove.yml
 
-    - name: remove temporary directory
-      file:
+    - name: Remove temporary directory
+      ansible.builtin.file:
         path: "{{ temp_directory }}"
         state: absent
-      when: not export_ovf|bool
+      when: not (export_ovf | bool)

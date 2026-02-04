@@ -1,15 +1,15 @@
 ---
 
-- name: create vmware guest snapshot
-  vmware_guest_snapshot:
-    hostname: "{{ lookup('env', 'VMWARE_HOST')|default(providers.vcenter.hostname) }}"
-    username: "{{ lookup('env', 'VMWARE_USER')|default(providers.vcenter.username) }}"
-    password: "{{ lookup('env', 'VMWARE_PASSWORD')|default(providers.vcenter.password) }}"
+- name: Create VMware guest snapshot
+  vmware.vmware.vm_snapshot:
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
     datacenter: "{{ providers.vcenter.datacenter }}"
     folder: "{{ providers.vcenter.folder | default(omit) }}"
     uuid: "{{ instance.instance.uuid | default(omit) }}"
     name: "{{ template.name }}"
-    validate_certs: no
+    validate_certs: false
     snapshot_name: "{{ snapshot_name }}"
     description: "{{ snapshot_description }}"
     state: present
