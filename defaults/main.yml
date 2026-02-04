@@ -6,6 +6,10 @@ install_updates: yes
 instance_wait_retry_limit: 300
 instance_wait_connection_timeout: 400
 
+# If true, set vCenter custom attributes app_name/role on the VM during provisioning.
+# Default off to avoid baking app-specific metadata into the resulting template.
+vmware_set_app_role_custom_attributes: false
+
 create_snapshot: yes
 snapshot_name: Linked
 snapshot_description: Linked snapshot for cloning

@@ -50,6 +50,7 @@
       - name: role
         value: "{{ template.role | default('') }}"
   when:
+    - vmware_set_app_role_custom_attributes | default(false) | bool
     - instance is defined
     - instance.instance is defined
     - template is defined

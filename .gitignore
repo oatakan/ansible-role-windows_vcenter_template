@@ -1,0 +1,34 @@
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / IDE
+.vscode/
+.idea/
+*.iml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Ansible runtime/cache
+.ansible/
+*.retry
+
+# Galaxy installed roles/collections (if vendored locally)
+roles/
+collections/
+
+# Build artifacts produced by this role (mkisofs + export)
+/tmp*
+/tmp*/
+*.iso
+*.ova
+*.ovf
+*.vmdk
+
+# Logs
+*.log

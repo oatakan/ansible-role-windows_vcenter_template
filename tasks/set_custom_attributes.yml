@@ -1,0 +1,47 @@
+---
+# Generic helper: set custom attributes on a VM or template.
+# Designed to be copy/pasted into sibling roles (windows/debian/etc).
+#
+# Expected variables:
+# - vmware_custom_attributes_target_name: vCenter inventory name of VM/template (default: template.name)
+# - vmware_custom_attributes_additional: list of {name, value} to also set (default: [])
+#
+# Optional toggles/overrides:
+# - vmware_custom_attributes_enabled: bool (default: true)
+# - vmware_template_created_at_attribute: attribute key (default: template_created_at)
+# - vmware_template_updated_at_attribute: attribute key (default: template_updated_at)
+# - vmware_template_created_at_value: override created-at value (default: now)
+# - vmware_template_updated_at_value: override updated-at value (default: now)
+
+- name: Compute timestamp for custom attributes (UTC)
+  ansible.builtin.set_fact:
+    vmware_template_now_utc: "{{ lookup('ansible.builtin.pipe', 'date -u +%Y-%m-%dT%H:%M:%SZ') }}"
+  when: vmware_custom_attributes_enabled | default(true) | bool
+
+- name: Build custom attributes list
+  ansible.builtin.set_fact:
+    vmware_custom_attributes_effective:
+      - name: "{{ vmware_template_created_at_attribute | default('template_created_at') }}"
+        value: "{{ vmware_template_created_at_value | default(vmware_template_now_utc) }}"
+      - name: "{{ vmware_template_updated_at_attribute | default('template_updated_at') }}"
+        value: "{{ vmware_template_updated_at_value | default(vmware_template_now_utc) }}"
+  when: vmware_custom_attributes_enabled | default(true) | bool
+
+- name: Append additional custom attributes
+  ansible.builtin.set_fact:
+    vmware_custom_attributes_effective: "{{ vmware_custom_attributes_effective + (vmware_custom_attributes_additional | default([])) }}"
+  when:
+    - vmware_custom_attributes_enabled | default(true) | bool
+    - (vmware_custom_attributes_additional | default([])) | length > 0
+
+- name: Apply custom attributes to VM/template
+  community.vmware.vmware_guest_custom_attributes:
+    hostname: "{{ lookup('env', 'VMWARE_HOST') | default(providers.vcenter.hostname) }}"
+    username: "{{ lookup('env', 'VMWARE_USER') | default(providers.vcenter.username) }}"
+    password: "{{ lookup('env', 'VMWARE_PASSWORD') | default(providers.vcenter.password) }}"
+    name: "{{ vmware_custom_attributes_target_name | default(template.name) }}"
+    state: present
+    validate_certs: false
+    attributes: "{{ vmware_custom_attributes_effective }}"
+  when: vmware_custom_attributes_enabled | default(true) | bool
+  failed_when: false

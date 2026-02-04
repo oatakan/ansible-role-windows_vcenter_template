@@ -16,3 +16,13 @@
     - instance is defined
     - instance.instance is defined
     - template is defined
+
+- name: Set template custom attributes
+  ansible.builtin.include_tasks: set_custom_attributes.yml
+  vars:
+    vmware_custom_attributes_target_name: "{{ template.name }}"
+  when:
+    - instance is defined
+    - instance.instance is defined
+    - template is defined
+  tags: post-config
