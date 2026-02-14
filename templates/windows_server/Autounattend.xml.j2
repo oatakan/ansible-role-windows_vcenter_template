@@ -363,8 +363,34 @@
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% endif %}
+{% if '2012' in distro_name %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -ExecutionPolicy ByPass -File F:\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP</CommandLine>
+            <CommandLine>cmd.exe /c reg add "HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman" /v Enabled /t REG_DWORD /d 0 /f</CommandLine>
+            <Description>Disable DH key exchange</Description>
+            <Order>21</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c reg add "HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman" /v ServerMinKeyBitLength /t REG_DWORD /d 2048 /f</CommandLine>
+            <Description>Set DH minimum key length</Description>
+            <Order>22</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c reg add "HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319" /v SchUseStrongCrypto /t REG_DWORD /d 1 /f</CommandLine>
+            <Description>Enable .NET strong crypto (64-bit)</Description>
+            <Order>23</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c reg add "HKLM\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319" /v SchUseStrongCrypto /t REG_DWORD /d 1 /f</CommandLine>
+            <Description>Enable .NET strong crypto (32-bit)</Description>
+            <Order>24</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -ExecutionPolicy ByPass -File E:\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP</CommandLine>
             <Description>Enable winrm</Description>
             <Order>30</Order>
             <RequiresUserInput>true</RequiresUserInput>
@@ -381,24 +407,65 @@
             <Order>32</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
-{% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
-{% if not '2008' in distro_name %}
+{% if '2012' in distro_name %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c powershell -ExecutionPolicy Bypass -Command "$a = Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | Select-Object -First 1; if($a){Set-NetIPInterface -InterfaceIndex $a.InterfaceIndex -Dhcp Disabled; Remove-NetIPAddress -InterfaceIndex $a.InterfaceIndex -Confirm:$false; Remove-NetRoute -InterfaceIndex $a.InterfaceIndex -Confirm:$false; New-NetIPAddress -InterfaceIndex $a.InterfaceIndex -IPAddress '{{ template.networks[0].ip }}' -DefaultGateway '{{ template.networks[0].gateway }}' -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ansible.utils.ipaddr('prefix') }}; $dns = '{{ template.networks[0].dns_servers | default([]) | join(',') }}'; if($dns){Set-DNSClientServerAddress -InterfaceIndex $a.InterfaceIndex -ServerAddresses $dns}}"</CommandLine>
-            <Description>Set static IP and DNS</Description>
+            <CommandLine>cmd.exe /c net stop winrm</CommandLine>
+            <Description>Restart WinRM service (stop)</Description>
+            <Order>33</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c net start winrm</CommandLine>
+            <Description>Restart WinRM service (start)</Description>
+            <Order>34</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
+{% if template.networks is defined and template.networks[0].ip is defined and template.networks[0].gateway is defined and template.networks[0].netmask is defined %}
+{% if '2008' in distro_name %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c netsh int ipv4 set address "Local Area connection" static {{ template.networks[0].ip }} {{ template.networks[0].netmask }} {{ template.networks[0].gateway }}</CommandLine>
+            <Description>Set static IP</Description>
             <Order>50</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
+
+{% if template.networks[0].dns_servers is defined %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c netsh int ipv4 set dns "Local Area connection" static {{ template.networks[0].dns_servers[0] }}</CommandLine>
+            <Description>Set DNS</Description>
+            <Order>51</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
+
+{% elif '2012' in distro_name or '2016' in distro_name or '2019' in distro_name or 'win10' in distro_name %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -Command "New-NetIPAddress -IPAddress {{ template.networks[0].ip }} -DefaultGateway {{ template.networks[0].gateway }} -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ansible.utils.ipaddr('prefix') }} -InterfaceIndex (Get-NetAdapter).InterfaceIndex"</CommandLine>
+            <Description>Set static IP</Description>
+            <Order>50</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+
+{% if template.networks[0].dns_servers is defined %}
+        <SynchronousCommand wcm:action="add">
+            <CommandLine>cmd.exe /c powershell -Command "Set-DNSClientServerAddress -InterfaceIndex (Get-NetAdapter | ? Status -eq 'Up' | select -First 1).InterfaceIndex -ServerAddresses {{ template.networks[0].dns_servers | join(',') }}"</CommandLine>
+            <Description>Set DNS</Description>
+            <Order>51</Order>
+            <RequiresUserInput>true</RequiresUserInput>
+        </SynchronousCommand>
+{% endif %}
+
 {% else %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c netsh int ipv4 set address "Local Area connection" static {{ template.networks[0].ip }} {{ template.networks[0].netmask }} {{ template.networks[0].gateway }}</CommandLine>
-            <Description>Set static ip</Description>
+            <CommandLine>cmd.exe /c powershell -ExecutionPolicy Bypass -Command "$a=Get-NetAdapter|?{$_.Status -eq 'Up'}|select -First 1;if($a){Set-NetIPInterface -InterfaceIndex $a.InterfaceIndex -Dhcp Disabled;Remove-NetIPAddress -InterfaceIndex $a.InterfaceIndex -Confirm:$false;Remove-NetRoute -InterfaceIndex $a.InterfaceIndex -Confirm:$false;New-NetIPAddress -InterfaceIndex $a.InterfaceIndex -IPAddress '{{ template.networks[0].ip }}' -DefaultGateway '{{ template.networks[0].gateway }}' -PrefixLength {{ (template.networks[0].ip + '/' + template.networks[0].netmask) | ansible.utils.ipaddr('prefix') }}}"</CommandLine>
+            <Description>Set static IP</Description>
             <Order>50</Order>
             <RequiresUserInput>true</RequiresUserInput>
         </SynchronousCommand>
 {% if template.networks[0].dns_servers is defined %}
         <SynchronousCommand wcm:action="add">
-            <CommandLine>cmd.exe /c netsh int ipv4 set dns "Local Area connection" static {{ template.networks[0].dns_servers[0] }}</CommandLine>
+            <CommandLine>cmd.exe /c powershell -Command "Set-DNSClientServerAddress -InterfaceIndex (Get-NetAdapter | ? Status -eq 'Up' | select -First 1).InterfaceIndex -ServerAddresses {{ template.networks[0].dns_servers | join(',') }}"</CommandLine>
             <Description>Set DNS</Description>
             <Order>51</Order>
             <RequiresUserInput>true</RequiresUserInput>

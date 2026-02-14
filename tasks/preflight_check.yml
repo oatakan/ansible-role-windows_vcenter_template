@@ -4,6 +4,14 @@
   ansible.builtin.set_fact:
     template_found: false
 
+- name: Log build context and WinRM connection plan
+  ansible.builtin.debug:
+    msg:
+      - "run_id={{ awx_job_id | default('n/a') }} role_action={{ role_action }}"
+      - "template={{ template_vm_name }} distro={{ distro_name }} guest_id={{ template_vm_guest_id }}"
+      - "installer_iso={{ iso_file_name }} autounattend_iso={{ iso_file }}"
+      - "target_ip={{ template_vm_ip_address }} winrm_port={{ vm_ansible_port | default('5986') }} winrm_scheme={{ vm_ansible_winrm_scheme | default('https') }} winrm_transport={{ vm_ansible_winrm_transport | default('credssp') }}"
+
 - name: Provision preflight checks
   when: role_action == 'provision'
   block:

@@ -50,7 +50,8 @@ set_network_to_private: >-
 enable_lab_config: false  # enables bypassing TPM and other checks for Windows 11 install
 
 vm_ansible_port: 5986
-vm_ansible_winrm_transport: credssp
+vm_ansible_winrm_scheme: "{{ 'http' if (vm_ansible_port | string) == '5985' else 'https' }}"
+vm_ansible_winrm_transport: "{{ 'basic' if distro_name is search('2012') else 'credssp' }}"
 vm_upgrade_powershell: false
 
 template_vm_name: windows-2022-standard-core-auto
