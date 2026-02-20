@@ -26,6 +26,7 @@ datastore_ova_folder: ova
 enable_auto_logon: true
 
 remove_vm_on_error: true
+vm_failed: false
 
 windows_build_role: oatakan.windows_template_build
 

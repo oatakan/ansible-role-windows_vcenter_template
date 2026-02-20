@@ -55,6 +55,10 @@
     - name: Remove VM (rescue)
       ansible.builtin.include_tasks: remove_vm.yml
       when: remove_vm_on_error | bool
+    
+    - name: set vm_failed variable
+      ansible.builtin.set_fact:
+        vm_failed: true
 
   always:
     - name: Remove Autounattend ISO from datastore
@@ -65,3 +69,8 @@
         path: "{{ temp_directory }}"
         state: absent
       when: not (export_ovf | bool)
+
+- name: fail if needed
+  ansible.builtin.fail:
+    msg: "fail to create a template: {{ template.name }}."
+  when: vm_failed|bool
